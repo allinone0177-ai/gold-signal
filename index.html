@@ -5,105 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XAU/USD AI Alpha Trader</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #e5e5e5; }
+        body { background-color: #0a0a0a; color: #e5e5e5; font-family: sans-serif; }
         .gold-text { color: #D4AF37; }
         .gold-bg { background-color: #D4AF37; }
-        .gold-border { border-color: #D4AF37; }
         .card { background: #151515; border: 1px solid #222; border-radius: 12px; }
         .loader { border: 3px solid #333; border-top: 3px solid #D4AF37; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
     </style>
 </head>
-<body class="p-4 md:p-8">
-
-    <header class="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-            <h1 class="text-3xl font-bold gold-text">GOLD AI <span class="text-white">PRO</span></h1>
-            <p class="text-xs text-gray-500 mt-1">Advanced XAU/USD Price Action Analyzer</p>
-        </div>
-        <div class="flex items-center gap-2 card p-2 px-4">
-            <input type="password" id="apiKey" placeholder="Enter Gemini API Key" class="bg-transparent border-none outline-none text-sm w-48">
-            <button onclick="saveKey()" class="gold-bg text-black px-4 py-1 rounded text-sm font-bold">SAVE</button>
-            <span id="apiStatus" class="text-xs text-red-500">Not Set</span>
+<body class="p-4">
+    <header class="max-w-4xl mx-auto mb-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold gold-text">GOLD AI PRO</h1>
+        <div class="card p-2 flex gap-2">
+            <input type="password" id="apiKey" value="AIzaSyAMGWcgCyPxG4tAjTN0k3Y-xUhZZU9aq38" class="bg-transparent text-xs outline-none w-32" readonly>
+            <span id="apiStatus" class="text-[10px] text-green-500 font-bold px-2">Connected</span>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="card p-4 text-center"><p class="text-gray-500 text-xs uppercase text-[10px]">Total Signals</p><p id="statTotal" class="text-xl font-bold">0</p></div>
-                <div class="card p-4 text-center"><p class="text-gray-500 text-xs uppercase text-[10px]">Win Rate</p><p id="statWinRate" class="text-xl font-bold gold-text">0%</p></div>
-                <div class="card p-4 text-center"><p class="text-gray-500 text-xs uppercase text-[10px]">Total Pips</p><p id="statPips" class="text-xl font-bold text-green-500">0</p></div>
-                <div class="card p-4 text-center"><p class="text-gray-500 text-xs uppercase text-[10px]">Max Streak</p><p id="statStreak" class="text-xl font-bold">0</p></div>
-            </div>
-            
-            <div class="card overflow-hidden h-[400px]">
-                <div id="tradingview_widget" style="height: 100%;"></div>
-            </div>
-
-            <div class="card overflow-hidden">
-                <div class="p-4 border-b border-gray-800 flex justify-between items-center"><h3 class="font-bold">Signal History</h3><button onclick="clearHistory()" class="text-xs text-red-500 hover:underline">CLEAR ALL</button></div>
-                <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-black/50 text-gray-400"><tr><th class="p-3">Time</th><th class="p-3">Type</th><th class="p-3">Entry</th><th class="p-3">Result</th><th class="p-3">Pips</th></tr></thead><tbody id="historyBody"></tbody></table></div>
-            </div>
+    <main class="max-w-4xl mx-auto space-y-4">
+        <div class="card h-[350px] overflow-hidden">
+            <div id="tradingview_widget" style="height: 100%;"></div>
         </div>
 
-        <div class="space-y-6">
-            <div class="card p-6 border-gold-border relative">
-                <div class="flex justify-between items-start mb-6">
-                    <div><h2 class="text-lg font-bold">Live AI Signal</h2><p id="sessionDisplay" class="text-[10px] text-blue-400">Detecting Session...</p></div>
-                    <div class="text-right"><p id="timerDisplay" class="text-[10px] text-gray-500 italic">Next scan: --:--</p></div>
-                </div>
-                <div id="signalContent" class="space-y-4"><div class="text-center py-10 text-gray-600"><p>Ready for analysis.</p></div></div>
-                <div id="loadingOverlay" class="hidden absolute inset-0 bg-black/80 flex flex-col items-center justify-center rounded-xl z-10"><div class="loader mb-4"></div><p class="text-sm gold-text font-bold uppercase">AI Analying Market...</p></div>
-                <button id="scanBtn" onclick="manualScan()" class="w-full mt-6 border border-gold-border text-gold-text py-3 rounded-lg font-bold hover:bg-gold-text hover:text-black transition-all">SCAN NOW</button>
+        <div class="card p-6 relative">
+            <div id="signalContent" class="text-center py-4 text-gray-500 font-bold">Ready to Analyze Market</div>
+            <div id="loadingOverlay" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center rounded-xl z-10">
+                <div class="loader mb-2"></div>
+                <p class="text-xs gold-text font-bold uppercase">AI IS ANALYZING XAU/USD...</p>
             </div>
-
-            <div id="actionPanel" class="hidden card p-6 space-y-4 border-l-4 border-yellow-500">
-                <h3 class="text-xs font-bold uppercase text-gray-400">Manage Active Signal</h3>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="closeSignal('TP1')" class="bg-green-600/20 text-green-500 p-2 rounded text-[10px] font-bold">TP1 HIT</button>
-                    <button onclick="closeSignal('TP2')" class="bg-green-600/20 text-green-500 p-2 rounded text-[10px] font-bold">TP2 HIT</button>
-                    <button onclick="closeSignal('TP3')" class="bg-green-600/20 text-green-500 p-2 rounded text-[10px] font-bold">TP3 HIT</button>
-                    <button onclick="closeSignal('SL')" class="bg-red-600/20 text-red-500 p-2 rounded text-[10px] font-bold">SL HIT</button>
-                </div>
-            </div>
+            <button onclick="fetchSignal()" class="w-full mt-4 border border-gold-border text-gold-text py-4 rounded-lg font-bold hover:bg-gold-text hover:text-black transition-all uppercase tracking-wider">SCAN NOW</button>
         </div>
     </main>
 
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        let history = JSON.parse(localStorage.getItem('gold_history') || '[]');
-        let activeSignal = JSON.parse(localStorage.getItem('gold_active') || 'null');
-        let nextScanTime = 30 * 60;
+        window.onload = () => {
+            new TradingView.widget({ "width": "100%", "height": "100%", "symbol": "OANDA:XAUUSD", "interval": "60", "theme": "dark", "style": "1", "container_id": "tradingview_widget", "locale": "en" });
+        };
 
-        window.onload = () => { initTV(); loadKey(); updateStats(); renderHistory(); if(activeSignal) renderActiveSignal(activeSignal); startCountdown(); setInterval(updateSession, 1000); };
-
-        function initTV() { new TradingView.widget({ "width": "100%", "height": "100%", "symbol": "OANDA:XAUUSD", "interval": "60", "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "en", "container_id": "tradingview_widget" }); }
-        function saveKey() { localStorage.setItem('gemini_key', document.getElementById('apiKey').value); checkKeyStatus(); }
-        function loadKey() { const k = localStorage.getItem('gemini_key'); if(k) document.getElementById('apiKey').value = k; checkKeyStatus(); }
-        function checkKeyStatus() { const k = localStorage.getItem('gemini_key'); const s = document.getElementById('apiStatus'); if(k && k.length > 20) { s.innerText = "Connected"; s.className = "text-xs text-green-500"; } else { s.innerText = "Not Set"; s.className = "text-xs text-red-500"; } }
-        
-        function updateSession() { 
-            const n = new Date(); const h = n.getUTCHours(); let sn = "Asian Session"; 
-            if(h >= 8 && h < 16) sn = "London Session"; if(h >= 13 && h < 21) sn = "New York Session"; 
-            document.getElementById('sessionDisplay').innerText = `UTC: ${n.getUTCHours()}:${n.getUTCMinutes()} | ${sn}`; 
-        }
-
-        async function fetchAISignal() {
-            const k = localStorage.getItem('gemini_key');
-            if(!k) return alert("Please set API Key!");
+        async function fetchSignal() {
+            const k = document.getElementById('apiKey').value;
             document.getElementById('loadingOverlay').classList.remove('hidden');
-
-            const prompt = `You are a 20-year pro XAU/USD trader. Analyze Price Action ONLY. 
-            Strict Rules: 1. Conf >= 80% or WAIT. 2. TP1=1.5x, TP2=2x, TP3=3x SL. 
-            Return ONLY raw JSON: {"action": "BUY/SELL", "entry": 0.0, "sl": 0.0, "tp1": 0.0, "tp2": 0.0, "tp3": 0.0, "confidence": 0, "reason": "short text"}
-            If no setup: {"action": "WAIT", "reason": "text"}`;
+            
+            const prompt = "Analyze XAU/USD Gold current price action. Provide a professional trading signal in JSON format: {'action': 'BUY/SELL/WAIT', 'entry': 0.0, 'sl': 0.0, 'tp': 0.0, 'confidence': '0%', 'reason': 'one short sentence'}. Return ONLY raw JSON.";
 
             try {
-                // Using Gemini 1.5 Flash for better reliability
+                // Using Gemini 1.5 Flash as it is more stable and faster
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -111,62 +59,32 @@
                 });
 
                 const data = await res.json();
-                if(!data.candidates) throw new Error("API Limit or Key Error");
-                
-                let text = data.candidates[0].content.parts[0].text;
+                const text = data.candidates[0].content.parts[0].text;
                 const match = text.match(/\{[\s\S]*\}/);
+                
                 if (match) {
-                    const sig = JSON.parse(match[0]);
-                    if(sig.action === 'WAIT') {
-                        document.getElementById('signalContent').innerHTML = `<div class='text-center py-6'><span class='bg-gray-800 px-4 py-1 rounded text-xs'>WAIT</span><p class='text-xs text-gray-500 mt-2'>${sig.reason}</p></div>`;
-                    } else {
-                        activeSignal = { ...sig, id: Date.now(), time: new Date().toLocaleTimeString(), status: 'RUNNING' };
-                        localStorage.setItem('gold_active', JSON.stringify(activeSignal));
-                        renderActiveSignal(activeSignal);
-                    }
+                    const s = JSON.parse(match[0]);
+                    document.getElementById('signalContent').innerHTML = `
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="px-6 py-2 rounded-lg font-black text-sm ${s.action === 'BUY' ? 'bg-green-600 text-white' : (s.action === 'SELL' ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300')}">${s.action}</span>
+                            <span class="gold-text font-bold text-lg underline">CONFIDENCE: ${s.confidence}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-sm font-mono">
+                            <div class="bg-black/50 p-3 rounded-lg border border-gray-800"><p class="text-[10px] text-gray-500 uppercase">Entry</p><p class="font-bold text-white">${s.entry}</p></div>
+                            <div class="bg-black/50 p-3 rounded-lg border border-gray-800"><p class="text-[10px] text-gray-500 uppercase">SL</p><p class="font-bold text-red-500">${s.sl}</p></div>
+                            <div class="bg-black/50 p-3 rounded-lg border border-gray-800"><p class="text-[10px] text-gray-500 uppercase">TP</p><p class="font-bold text-green-500">${s.tp}</p></div>
+                        </div>
+                        <div class="mt-6 p-3 bg-white/5 rounded-lg border-l-4 border-gold-border">
+                             <p class="text-[11px] text-gray-400 italic text-left leading-relaxed">AI Analysis: ${s.reason}</p>
+                        </div>
+                    `;
                 }
             } catch (e) {
-                document.getElementById('signalContent').innerHTML = `<div class='text-center text-red-500'><p class='text-xs'>Error: ${e.message}</p><button onclick='manualScan()' class='text-[10px] underline'>Retry</button></div>`;
+                document.getElementById('signalContent').innerHTML = "<div class='py-4'><p class='text-red-500 text-xs font-bold'>Error: Signal Fetching Failed</p><p class='text-[10px] text-gray-600 mt-1'>Please try again in 1 minute.</p></div>";
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
         }
-
-        function renderActiveSignal(s) {
-            document.getElementById('actionPanel').classList.remove('hidden');
-            document.getElementById('signalContent').innerHTML = `
-                <div class="flex justify-between items-center"><span class="${s.action === 'BUY' ? 'bg-green-600' : 'bg-red-600'} text-black px-3 py-1 rounded font-black text-xs">${s.action}</span><div class="relative flex items-center justify-center"><svg class="w-10 h-10"><circle class="text-gray-800" stroke-width="3" stroke="currentColor" fill="transparent" r="18" cx="20" cy="20"/><circle class="gold-text progress-ring__circle" stroke-width="3" stroke-dasharray="113" stroke-dashoffset="${113 - (s.confidence / 100) * 113}" stroke-linecap="round" stroke="currentColor" fill="transparent" r="18" cx="20" cy="20"/></svg><span class="absolute text-[8px] font-bold">${s.confidence}%</span></div></div>
-                <div class="grid grid-cols-2 gap-4 mt-4"><div><p class="text-[10px] text-gray-500 uppercase">Entry</p><p class="text-md font-bold font-mono">${s.entry}</p></div><div><p class="text-[10px] text-gray-500 uppercase">SL</p><p class="text-md font-bold text-red-400 font-mono">${s.sl}</p></div></div>
-                <div class="space-y-1 bg-black/30 p-2 rounded mt-2 text-[11px]"><div class="flex justify-between"><span>TP1</span><span class="text-green-400">${s.tp1}</span></div><div class="flex justify-between"><span>TP2</span><span class="text-green-400">${s.tp2}</span></div><div class="flex justify-between"><span>TP3</span><span class="text-green-400">${s.tp3}</span></div></div>
-                <p class="text-[10px] text-gray-400 mt-2 italic">${s.reason}</p>`;
-        }
-
-        function closeSignal(res) {
-            if(!activeSignal) return;
-            const e = parseFloat(activeSignal.entry), s = parseFloat(activeSignal.sl), act = activeSignal.action;
-            let p = (res === 'SL') ? (act === 'BUY' ? s - e : e - s) : (act === 'BUY' ? parseFloat(activeSignal[res.toLowerCase()]) - e : e - parseFloat(activeSignal[res.toLowerCase()]));
-            p = Math.round(p * 10);
-            history.unshift({ ...activeSignal, result: res.includes('TP') ? 'WIN' : 'LOSS', pips: p, closeTime: new Date().toLocaleTimeString() });
-            localStorage.setItem('gold_history', JSON.stringify(history));
-            activeSignal = null; localStorage.removeItem('gold_active');
-            document.getElementById('actionPanel').classList.add('hidden');
-            document.getElementById('signalContent').innerHTML = `<p class='text-center py-10 text-gray-600 text-xs'>Signal Closed.</p>`;
-            updateStats(); renderHistory();
-        }
-
-        function manualScan() { if(activeSignal) return alert("Signal in progress!"); fetchAISignal(); nextScanTime = 30 * 60; }
-        function startCountdown() { setInterval(() => { if(!activeSignal && nextScanTime > 0) { nextScanTime--; let m = Math.floor(nextScanTime / 60), s = nextScanTime % 60; document.getElementById('timerDisplay').innerText = `Next scan: ${m}:${s < 10 ? '0' : ''}${s}`; if(nextScanTime === 0) fetchAISignal(); } }, 1000); }
-        function updateStats() {
-            const tot = history.length, wins = history.filter(t => t.result === 'WIN').length;
-            const pips = history.reduce((a, c) => a + c.pips, 0);
-            let curS = 0, maxS = 0; history.forEach(t => { if(t.result === 'WIN') { curS++; if(curS > maxS) maxS = curS; } else curS = 0; });
-            document.getElementById('statTotal').innerText = tot;
-            document.getElementById('statWinRate').innerText = (tot === 0 ? 0 : Math.round((wins / tot) * 100)) + '%';
-            document.getElementById('statPips').innerText = pips;
-            document.getElementById('statStreak').innerText = maxS;
-        }
-        function renderHistory() { document.getElementById('historyBody').innerHTML = history.map(t => `<tr class="border-b border-gray-900 text-[11px]"><td class="p-3 text-gray-500">${t.closeTime}</td><td class="p-3 font-bold ${t.action === 'BUY' ? 'text-green-500' : 'text-red-500'}">${t.action}</td><td class="p-3 font-mono">${t.entry}</td><td class="p-3"><span class="px-2 py-0.5 rounded ${t.result === 'WIN' ? 'bg-green-600/20 text-green-500' : 'bg-red-600/20 text-red-500'}">${t.result}</span></td><td class="p-3 font-bold ${t.pips >= 0 ? 'text-green-500' : 'text-red-500'}">${t.pips}</td></tr>`).join(''); }
-        function clearHistory() { if(confirm("Clear history?")) { history = []; localStorage.setItem('gold_history', '[]'); updateStats(); renderHistory(); } }
     </script>
 </body>
 </html>
